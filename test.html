@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+        import { getStorage, ref, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-storage.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-analytics.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyC6yuEiRtEPwlMAmO30vqrOgoe6Ks5FAvA",
+            authDomain: "legend-85fd6.firebaseapp.com",
+            databaseURL: "https://legend-85fd6-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "legend-85fd6",
+            storageBucket: "legend-85fd6.appspot.com",
+            messagingSenderId: "202249938060",
+            appId: "1:202249938060:web:85177059320d7da0c187a9",
+            measurementId: "G-9MMS21K1HQ"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const storage = getStorage(app);
+       
+
+       
+
+        // Download function
+        function downloadFile() {
+            //var fileName = 'your_file_name'; // Replace with the file you want to download
+            var storageRef = ref(storage, 'games/2oXPRwtkNyeZ964GbQtW/2oXPRwtkNyeZ964GbQtW.png');
+
+            getDownloadURL(storageRef)
+                .then(function (url) {
+                    // Use the URL to download the file
+                    console.log('Download URL:', url);
+                })
+                .catch(function (error) {
+                    console.error('Error getting download URL:', error);
+                });
+        }
+        downloadFile();
+    </script>
+</body>
+
+</html>
