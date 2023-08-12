@@ -21,6 +21,8 @@ class GameServer {
       if (WebSocketTransformer.isUpgradeRequest(request)) {
         WebSocketTransformer.upgrade(request).then((WebSocket socket) {
           socket.listen((message) {
+            print(message);
+
             final decodedData = jsonDecode(message);
             print(decodedData);
             if (decodedData['header'] != null &&
@@ -44,7 +46,6 @@ class GameServer {
                     _client[id] = socket;
                     break;
                   case 'changeState':
-                    
                     final state = requestData['params']['state'];
                     newState(socket, decodedData['header']['from'], state);
                     break;
@@ -80,25 +81,21 @@ class GameServer {
     }
   }
 
-  void startGame(String gameId, String gameUrl )async {
+  void startGame(String gameId, String gameUrl) async {
     print("start game $gameUrl");
-    if(await _gameFileManager.isGameFolderExist(gameId)) {
+    if (await _gameFileManager.isGameFolderExist(gameId)) {
       _gameProcessor.runGame(gameId);
       MonitorController.launchMonitor();
-    }else {
+    } else {
       // download the game
       _gameFileManager.downloadGame(gameId, gameUrl);
-      
     }
-    
-
   }
 
   void closeGame(String game) {
     print("close game");
     _gameProcessor.killGame();
     MonitorController.closeMonitor();
-
   }
 
   void newState(WebSocket client, String from, dynamic state) {
