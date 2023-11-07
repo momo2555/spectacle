@@ -11,6 +11,7 @@ class GameServer {
   Map<String, WebSocket?> _client = {
     "monitor": null,
     "controller": null,
+    "bridge": null,
   };
   GameProcessor _gameProcessor = GameProcessor();
   GameFileManager _gameFileManager = GameFileManager();
@@ -22,41 +23,48 @@ class GameServer {
         WebSocketTransformer.upgrade(request).then((WebSocket socket) {
           socket.listen((message) {
             print(message);
-
-            final decodedData = jsonDecode(message);
-            print(decodedData);
-            if (decodedData['header'] != null &&
-                decodedData['header']['type'] != null) {
-              final headerType = decodedData['header']['type'];
-              if (headerType == 'request') {
-                final requestData = decodedData['request'];
-                switch (requestData['exec']) {
-                  case 'launchGame':
-                    final game = requestData['params']['gameId'];
-                    final gameUrl = requestData['params']['gameUrl'];
-                    startGame(game, gameUrl);
-                    break;
-                  case 'closeGame':
-                    final game = requestData['params']['gameId'];
-                    closeGame(game);
-                    break;
-                  case 'identification':
-                    final id = decodedData['header']['from'];
-                    print('identification: $id');
-                    _client[id] = socket;
-                    break;
-                  case 'changeState':
-                    final state = requestData['params']['state'];
-                    newState(socket, decodedData['header']['from'], state);
-                    break;
-                  default:
-                    break;
+            bool decodeJsonError = false;
+            dynamic decodedData = {};
+            try {
+              decodedData = jsonDecode(message);
+            } catch (e) {
+              decodeJsonError = true;
+            }
+            if (!decodeJsonError) {
+              print(decodedData);
+              if (decodedData['header'] != null &&
+                  decodedData['header']['type'] != null) {
+                final headerType = decodedData['header']['type'];
+                if (headerType == 'request') {
+                  final requestData = decodedData['request'];
+                  switch (requestData['exec']) {
+                    case 'launchGame':
+                      final game = requestData['params']['gameId'];
+                      final gameUrl = requestData['params']['gameUrl'];
+                      startGame(game, gameUrl);
+                      break;
+                    case 'closeGame':
+                      final game = requestData['params']['gameId'];
+                      closeGame(game);
+                      break;
+                    case 'identification':
+                      final id = decodedData['header']['from'];
+                      print('identification: $id');
+                      _client[id] = socket;
+                      break;
+                    case 'changeState':
+                      final state = requestData['params']['state'];
+                      newState(socket, decodedData['header']['from'], state);
+                      break;
+                    default:
+                      break;
+                  }
+                } else if (headerType == 'data_exchange') {
+                  final to = decodedData['header']['to'];
+                  final from = decodedData['header']['from'];
+                  final data = decodedData['data'];
+                  dataExchange(socket, from, to, data);
                 }
-              } else if (headerType == 'data_exchange') {
-                final to = decodedData['header']['to'];
-                final from = decodedData['header']['from'];
-                final data = decodedData['data'];
-                dataExchange(socket, from, to, data);
               }
             }
           });
