@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:dio/dio.dart';
 import 'package:spectacle/controllers/game_file_manager.dart';
 import 'package:spectacle/controllers/game_processor.dart';
 import 'package:spectacle/controllers/monitor_controller.dart';
@@ -13,6 +14,7 @@ class GameServer {
     "controller": null,
     "bridge": null,
   };
+  List<dynamic> devices = [];
   GameProcessor _gameProcessor = GameProcessor();
   GameFileManager _gameFileManager = GameFileManager();
 
@@ -64,6 +66,12 @@ class GameServer {
                   final from = decodedData['header']['from'];
                   final data = decodedData['data'];
                   dataExchange(socket, from, to, data);
+                } else if (headerType == 'identification') {
+                  // if the bridge isn't in connected devices
+                  if (_client["bridge"] == null) {
+                    _client["bridge"] = socket;
+                  }
+                  sendIdentificationResponse(socket, decodedData);
                 }
               }
             }
@@ -73,7 +81,7 @@ class GameServer {
     });
   }
 
-  void dataExchange(WebSocket client, String from, String to, dynamic data) {
+  void dataExchange(WebSocket? client, String from, String to, dynamic data) {
     final dataToSend = {
       "header": {
         "type": "data_exchange",
@@ -135,5 +143,24 @@ class GameServer {
         value.add(strData);
       }
     }
+  }
+
+  void sendIdentificationResponse(
+      WebSocket bridge, Map<String, dynamic> frame) {
+    var from = frame["header"]["from"];
+    var to = frame["header"]["to"];
+    var toAddr = frame["header"]["to_addr"];
+    var fromAddr = frame["header"]["from_addr"];
+    Map<String, dynamic> response = {};
+    response["header"] = {
+      "to": from,
+      "from": to,
+      "from_addr": toAddr,
+      "to_addr": fromAddr,
+      "type": "confirm_identity",
+    };
+
+    final strData = jsonEncode(response);
+    bridge.add(strData);
   }
 }
