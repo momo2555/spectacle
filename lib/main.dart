@@ -10,21 +10,18 @@ import 'package:spectacle/views/game_monitor_page.dart';
 import 'package:spectacle/views/main_screen_page.dart';
 import 'package:window_manager/window_manager.dart';
 
-
 final globalNavigatorKey = GlobalKey<NavigatorState>();
-void main(List<String> args)  async {
-  
-  
-  if (runWebViewTitleBarWidget (args)) {
+void main(List<String> args) async {
+  if (runWebViewTitleBarWidget(args)) {
     return;
   }
-  
+
   WidgetsFlutterBinding.ensureInitialized();
   DetectionServer().run();
   GameServer().run();
   await windowManager.ensureInitialized();
 
-  WindowOptions windowOptions = const  WindowOptions(
+  WindowOptions windowOptions = const WindowOptions(
     fullScreen: true,
     center: true,
     backgroundColor: Colors.transparent,
@@ -49,7 +46,6 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
@@ -63,21 +59,15 @@ class MyApp extends StatelessWidget {
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
-    
     switch (settings.name) {
       case '/':
         //return MaterialPageRoute(builder: (context) => const MainSignPage());
-        return MaterialPageRoute(
-            builder: (context) {
-              return MainScreenPage();
-            });
-
+        return MaterialPageRoute(builder: (context) {
+          return MainScreenPage();
+        });
       case '/game_monitor':
-        return MaterialPageRoute(
-            builder: (context) => GameMonitorPage(
-                ));
+        return MaterialPageRoute(builder: (context) => GameMonitorPage());
 
-      
       default:
         return MaterialPageRoute(builder: (context) => Container());
     }
