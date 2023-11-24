@@ -24,7 +24,6 @@ class GameServer {
       if (WebSocketTransformer.isUpgradeRequest(request)) {
         WebSocketTransformer.upgrade(request).then((WebSocket socket) {
           socket.listen((message) {
-            print(message);
             bool decodeJsonError = false;
             dynamic decodedData = {};
             try {
@@ -99,12 +98,19 @@ class GameServer {
 
   void startGame(String gameId, String gameUrl) async {
     print("start game $gameUrl");
+    bool gameDownloaded = await _gameFileManager.isGameFolderExist(gameId);
+    print("game exist 1 ? : $gameDownloaded");
+    if (!gameDownloaded) {
+      // download the game
+      print("THe game is not not downloaded, -> download the game");
+      await _gameFileManager.downloadGame(gameId, gameUrl);
+    }
+    gameDownloaded = await _gameFileManager.isGameFolderExist(gameId);
+    print("game exist 2 ? : $gameDownloaded");
     if (await _gameFileManager.isGameFolderExist(gameId)) {
+      print("The game is already downloaded, exec the game");
       _gameProcessor.runGame(gameId);
       MonitorController.launchMonitor();
-    } else {
-      // download the game
-      _gameFileManager.downloadGame(gameId, gameUrl);
     }
   }
 
@@ -158,9 +164,13 @@ class GameServer {
       "from_addr": toAddr,
       "to_addr": fromAddr,
       "type": "confirm_identity",
+      "data": [
+        {"res": 0, "type": "int"}
+      ]
     };
 
-    final strData = jsonEncode(response);
+    final strData = jsonEncode(response) + "\n";
+    print("SEnd back the identification request");
     bridge.add(strData);
   }
 }
