@@ -65,6 +65,9 @@ class GameServer {
                   final from = decodedData['header']['from'];
                   final data = decodedData['data'];
                   dataExchange(socket, from, to, data);
+                } else if (headerType == 'device_event') {
+                  dispatchDeviceEvent(decodedData);
+                } else if (headerType == 'device_data') {
                 } else if (headerType == 'identification') {
                   // if the bridge isn't in connected devices
                   if (_client["bridge"] == null) {
@@ -151,6 +154,14 @@ class GameServer {
     }
   }
 
+  void sendTo(String from, String to, Map<String, dynamic> data) {
+    final strData = jsonEncode(data);
+    if (_client.keys.contains(to) && _client[to] != null) {
+      print("The frame can be sent to $to");
+      _client[to]!.add(strData);
+    }
+  }
+
   void sendIdentificationResponse(
       WebSocket bridge, Map<String, dynamic> frame) {
     var from = frame["header"]["from"];
@@ -172,5 +183,10 @@ class GameServer {
     final strData = jsonEncode(response) + "\n";
     print("SEnd back the identification request");
     bridge.add(strData);
+  }
+
+  void dispatchDeviceEvent(Map<String, dynamic> frame) {
+    print("Dspatch data");
+    sendTo("", frame["header"]["to"], frame);
   }
 }
