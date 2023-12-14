@@ -12,17 +12,19 @@ class MainScreenPage extends StatefulWidget {
 class _MainScreenPageState extends State<MainScreenPage> {
   @override
   void initState() {
-    
     // TODO: implement initState
     super.initState();
-
-    
   }
+
   @override
-  Widget build(BuildContext context) {  
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
-      body: Center(child: Text("La boîte à jeux", style: TextStyle(fontSize: 50,color: Theme.of(context).primaryColorDark),)),
+      body: Center(
+          child: Image(
+        image: AssetImage("assets/images/logo_koppelia.png"),
+        height: 700,
+      )),
     );
   }
 }

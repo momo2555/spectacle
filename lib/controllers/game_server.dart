@@ -92,11 +92,7 @@ class GameServer {
       },
       "data": data,
     };
-    final strDataToSend = jsonEncode(dataToSend);
-
-    if (client != null) {
-      client.add(strDataToSend);
-    }
+    sendTo(from, to, dataToSend);
   }
 
   void startGame(String gameId, String gameUrl) async {
