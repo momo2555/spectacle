@@ -16,13 +16,17 @@ async function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      
+      webviewTag: true,
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION
     }
   })
+  win.webContents.on('will-navigate', (event, url) => {
+    event.preventDefault(); // Prevent the default behavior (opening in external browser)
+    // Load the URL within the Electron app
+  });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode

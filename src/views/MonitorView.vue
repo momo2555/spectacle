@@ -1,5 +1,5 @@
 <template>
-  <div class="monitor">
-    <h1>This is an about page</h1>
-  </div>
+  <webview src="http://localhost:2227/game/monitor.html">
+
+  </webview>
 </template>

@@ -6,7 +6,12 @@
   <router-view/>
 </template>
 
-<style>
+<style lang="less">
+
+@import 'style/colors.less';
+body {
+  background-color: @primary-color;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -25,6 +30,6 @@ nav a {
 }
 
 nav a.router-link-exact-active {
-  color: #42b983;
+  color: @secondary-color;
 }
 </style>
