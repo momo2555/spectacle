@@ -9,15 +9,25 @@
 <style lang="less">
 
 @import 'style/colors.less';
-body {
-  background-color: @primary-color;
+* {
+  box-sizing: border-box;
 }
+html {
+  height: 100%;
+}
+body {
+  margin: 0;
+  background-color: @primary-color;
+  height: 100%;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  height: 100%;
 }
 
 nav {
