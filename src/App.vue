@@ -1,10 +1,24 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/monitor">About</router-link>
-  </nav>
   <router-view/>
 </template>
+
+<script>
+export default {
+
+  name: 'HomeView',
+  components: {
+    
+  },
+  mounted () {
+    this.$filarmonic.onStartGame(()=>{
+      this.$router.push("/monitor");
+    });
+    this.$filarmonic.onCloseGame(()=>{
+      this.$router.push("/");
+    });
+  }
+}
+</script>
 
 <style lang="less">
 

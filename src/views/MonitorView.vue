@@ -5,6 +5,6 @@
 </template>
 <style lang="less">
 #monitor {
-  height: calc(100% - 78px);
+  height: 100%;
 }
 </style>

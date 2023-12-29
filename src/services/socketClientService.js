@@ -8,6 +8,7 @@ class SocketClientService {
         this.device = "spectacle";
         this.initEvents();
         this.startGameCallbacks = [];
+        this.closeGameCallbacks = [];
 
     }
 
@@ -16,7 +17,7 @@ class SocketClientService {
             this.identification();
         });
         this.ws.onmessage = (e) => {
-            let data = JSON.parse(e.dat);
+            let data = JSON.parse(e.data);
             this.receive(data);
         };
         
@@ -34,16 +35,20 @@ class SocketClientService {
 
     receive(message) {
         console.log("Receive new message");
-        let mkeys = message.keys();
-        if(mkeys.includes("header")) {
+        if(message["header"]!=undefined) {
             let header = message["header"];
-            let hkeys = header.keys();
-            if(hkeys.includes("type")) {
+
+            console.log(header);
+            if(header["type"]!=undefined) {
               let type = header["type"];
               // is a request 
               if(type == "request") {
-                if(message["params"]["exec"] != undefined && message["params"]["exec"] == "launchGame") {
+                console.log(message["request"])
+                if(message["request"]["exec"] != undefined && message["request"]["exec"] == "launchGame") {
                     this.execStartGame();
+                } 
+                if(message["request"]["exec"] != undefined && message["request"]["exec"] == "closeGame") {
+                    this.execCloseGame();
                 }
               }  
             }
@@ -55,9 +60,20 @@ class SocketClientService {
     }
 
     execStartGame() {
-
+        for(let callback of this.startGameCallbacks) {
+            callback();
+        }
     }
 
+    onCloseGame(callback) {
+        this.closeGameCallbacks.push(callback)
+    }
+
+    execCloseGame() {
+        for(let callback of this.closeGameCallbacks) {
+            callback();
+        }
+    }
 
 }
 
