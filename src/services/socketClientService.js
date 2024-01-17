@@ -44,8 +44,9 @@ class SocketClientService {
               // is a request 
               if(type == "request") {
                 console.log(message["request"])
-                if(message["request"]["exec"] != undefined && message["request"]["exec"] == "launchGame") {
+                if(message["request"]["exec"] != undefined && message["request"]["exec"] == "game_started") {
                     this.execStartGame();
+                    console.log("Start Game")    
                 } 
                 if(message["request"]["exec"] != undefined && message["request"]["exec"] == "closeGame") {
                     this.execCloseGame();
